@@ -2,19 +2,28 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ArticleRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Context;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
+#[ApiResource(
+    normalizationContext: ["groups" => "artciles:list"]
+)]
 class Article
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("articles:list")]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("articles:list")]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -24,6 +33,8 @@ class Article
     private ?bool $visible = null;
 
     #[ORM\Column]
+    #[Groups("articles:list")]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => "d/m/:Y"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
